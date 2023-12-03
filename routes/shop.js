@@ -10,7 +10,7 @@ Router.get("/users", (req, res, next) => {
 });
 
 Router.get("/", (req, res, next) => {
-    res.render("shop", {title: "My Shop", products: adminData.products, page: "shop"});
+    res.render("shop", {pageTitle: "My Shop", products: adminData.products});
 });
 
 module.exports = Router;
