@@ -10,8 +10,7 @@ Router.get("/users", (req, res, next) => {
 });
 
 Router.get("/", (req, res, next) => {
-    console.log(adminData.products);
-    res.sendFile(path.join(rootDir, "views", "shop.html"));
+    res.render("shop", {pageTitle: "My Shop", products: adminData.products, page: "shop"});
 });
 
 module.exports = Router;
