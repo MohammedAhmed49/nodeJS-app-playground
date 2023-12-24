@@ -13,15 +13,15 @@ const getProducts = (req, res, next) => {
 }
 
 const getCart = (req, res, next) => {
-    Product.fetchAllProducts((products) => {
-        res.render("shop/cart", {pageTitle: "My Cart", products: products, page: "cart"});
-    });
+    res.render("shop/cart", {pageTitle: "My Cart", page: "cart"});
+}
+
+const getOrders = (req, res, next) => {
+    res.render("shop/orders", {pageTitle: "My Cart", page: "cart"});
 }
 
 const getCheckout = (req, res, next) => {
-    Product.fetchAllProducts((products) => {
-        res.render("shop/checkout", {pageTitle: "My Checkout", products: products, page: "checkout"});
-    });
+    res.render("shop/checkout", {pageTitle: "My Checkout", page: "checkout"});
 }
 
 
@@ -29,3 +29,4 @@ exports.getIndex = getIndex;
 exports.getProducts = getProducts;
 exports.getCart = getCart;
 exports.getCheckout = getCheckout;
+exports.getOrders = getOrders;
