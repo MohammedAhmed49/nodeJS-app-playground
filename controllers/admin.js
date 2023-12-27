@@ -16,7 +16,7 @@ const postAddProduct = (req, res, next) => {
 
 const getProducts = (req, res, next) => {
     Product.fetchAllProducts(products => {
-        res.render("admin/products", {pageTitle: "Admin Products", products: products, page: "admin-products"})
+        res.render("admin/products", {pageTitle: "Admin Products", prods: products, page: "admin-products"})
     })
 }
 

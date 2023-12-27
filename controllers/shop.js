@@ -2,14 +2,21 @@ const Product = require("../models/product");
 
 const getIndex = (req, res, next) => {
     Product.fetchAllProducts((products) => {
-        res.render("shop/index", {pageTitle: "All Products", products: products, page: "shop"})
+        res.render("shop/index", {pageTitle: "All Products", prods: products, page: "shop"})
     });
 }
 
 const getProducts = (req, res, next) => {
     Product.fetchAllProducts((products) => {
-        res.render("shop/product-list", {pageTitle: "My Shop", products: products, page: "products"});
+        res.render("shop/product-list", {pageTitle: "My Shop", prods: products, page: "products"});
     });
+}
+
+const getProduct = (req, res, next) => {
+    const productId = req.params.productId;
+    Product.getProductById(productId, (product) => {
+        res.render("shop/product-detail", {pageTitle: product.title, page: "products", product: product})
+    })
 }
 
 const getCart = (req, res, next) => {
@@ -27,6 +34,7 @@ const getCheckout = (req, res, next) => {
 
 exports.getIndex = getIndex;
 exports.getProducts = getProducts;
+exports.getProduct = getProduct;
 exports.getCart = getCart;
 exports.getCheckout = getCheckout;
 exports.getOrders = getOrders;

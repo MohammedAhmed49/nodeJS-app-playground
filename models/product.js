@@ -18,6 +18,7 @@ class Product {
         this.imageUrl = imageUrl;
         this.price = price;
         this.description = description;
+        this.id = Math.random().toString();
     }
 
     save() {
@@ -31,6 +32,13 @@ class Product {
 
     static fetchAllProducts(callbackFn) {
         getProductsFromFile(callbackFn);
+    }
+
+    static getProductById(id, cb) {
+        getProductsFromFile((products) => {
+            const product = products.find(item => item.id === id);
+            cb(product);
+        })
     }
 }
 
