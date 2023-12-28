@@ -1,7 +1,21 @@
 const Product = require("../models/product");
 
 const getAddProduct = (req, res, next) => {
-    res.render("admin/add-product", {pageTitle: "Add Product", page: "add-product"})
+    res.render("admin/edit-product", {pageTitle: "Add Product", page: "add-product", editing: false})
+};
+
+const getEditProduct = (req, res, next) => {
+    const editMode = req.query.edit;
+    if(!editMode) {
+        return res.redirect("/");
+    }
+    const productId = req.params.productId;
+    Product.getProductById(productId, (product) => {
+        if(!product) {
+            res.redirect("/");
+        }
+        res.render("admin/edit-product", {pageTitle: "Edit Product", page: "edit-product", editing: editMode, product: product})
+    }) 
 };
 
 const postAddProduct = (req, res, next) => {
@@ -21,5 +35,6 @@ const getProducts = (req, res, next) => {
 }
 
 exports.getAddProduct = getAddProduct;
+exports.getEditProduct = getEditProduct;
 exports.postAddProduct = postAddProduct;
 exports.getProducts = getProducts;
