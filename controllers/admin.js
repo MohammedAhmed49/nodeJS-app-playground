@@ -4,6 +4,16 @@ const getAddProduct = (req, res, next) => {
     res.render("admin/edit-product", {pageTitle: "Add Product", page: "add-product", editing: false})
 };
 
+const postAddProduct = (req, res, next) => {
+    const title = req.body.title;
+    const price = req.body.price;
+    const imageUrl = req.body.imageUrl;
+    const description = req.body.description;
+    const product = new Product(null, title, imageUrl, price, description);
+    product.save();
+    res.redirect("/");
+}
+
 const getEditProduct = (req, res, next) => {
     const editMode = req.query.edit;
     if(!editMode) {
@@ -18,14 +28,15 @@ const getEditProduct = (req, res, next) => {
     }) 
 };
 
-const postAddProduct = (req, res, next) => {
+const postEditProduct = (req, res, next) => {
+    const id = req.body.productId;
     const title = req.body.title;
     const price = req.body.price;
     const imageUrl = req.body.imageUrl;
     const description = req.body.description;
-    const product = new Product(title, imageUrl, price, description);
+    const product = new Product(id, title, imageUrl, price, description);
     product.save();
-    res.redirect("/");
+    res.redirect("/admin/products");
 }
 
 const getProducts = (req, res, next) => {
@@ -35,6 +46,7 @@ const getProducts = (req, res, next) => {
 }
 
 exports.getAddProduct = getAddProduct;
-exports.getEditProduct = getEditProduct;
 exports.postAddProduct = postAddProduct;
+exports.getEditProduct = getEditProduct;
+exports.postEditProduct = postEditProduct;
 exports.getProducts = getProducts;
