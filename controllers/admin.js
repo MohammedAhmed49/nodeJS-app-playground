@@ -45,8 +45,14 @@ const getProducts = (req, res, next) => {
     })
 }
 
+const postDeleteProduct = (req, res, next) => {
+    const id = req.body.productId;
+    Product.deleteProduct(id);
+}
+
 exports.getAddProduct = getAddProduct;
 exports.postAddProduct = postAddProduct;
 exports.getEditProduct = getEditProduct;
 exports.postEditProduct = postEditProduct;
 exports.getProducts = getProducts;
+exports.postDeleteProduct = postDeleteProduct;

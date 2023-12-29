@@ -50,6 +50,15 @@ class Product {
             cb(product);
         })
     }
+
+    static deleteProduct(id) {
+        getProductsFromFile((products) => {
+            const updatedProducts = products.filter(item => item.id !== id);
+            fs.writeFile(filePath, updatedProducts, (err) => {
+                console.log(err);
+            })
+        })
+    }
 }
 
 module.exports = Product;
