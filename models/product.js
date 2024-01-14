@@ -11,14 +11,15 @@ class Product {
     }
 
     save() {
-        
+        return db.execute("insert into products (title, price, description, imageUrl) values (?, ?, ?, ?)",[this.title,this.price,this.description, this.imageUrl]);
     }
 
-    static fetchAllProducts(callbackFn) {
+    static fetchAllProducts() {
+        return db.execute("select * from products");
     }
 
-    static getProductById(id, cb) {
-
+    static getProductById(id) {
+        return db.execute(`select * from products where products.id = ?`, [id]);
     }
 
     static deleteProduct(id) {
