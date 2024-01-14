@@ -1,18 +1,6 @@
-const path = require("path");
-const fs = require("fs");
 const Cart = require("./cart");
+const db = require("../utils/database");
 
-const filePath = path.join(path.dirname(require.main.filename), "data", "products.json");
-
-const getProductsFromFile = (callbackFn) => {
-    fs.readFile(filePath, (error, data) => {
-        if (error) {
-            callbackFn([]);
-        } else {
-            callbackFn(JSON.parse(data));
-        }
-    })
-}
 class Product {
     constructor(id, title, imageUrl, price, description) {
         this.title = title;
@@ -23,45 +11,18 @@ class Product {
     }
 
     save() {
-        getProductsFromFile(products => {
-            if(this.id) {
-                const updatedProducts = [...products];
-                const existingProductIndex = updatedProducts.findIndex(item => item.id === this.id);
-                updatedProducts[existingProductIndex] = this;
-                fs.writeFile(filePath, JSON.stringify(updatedProducts), (error) => {
-                    console.log(error);
-                });
-            } else {
-                this.id = Math.random().toString();
-                products.push(this);
-                fs.writeFile(filePath, JSON.stringify(products), (error) => {
-                    console.log(error);
-                });
-            }
-        })
+        
     }
 
     static fetchAllProducts(callbackFn) {
-        getProductsFromFile(callbackFn);
     }
 
     static getProductById(id, cb) {
-        getProductsFromFile((products) => {
-            const product = products.find(item => item.id === id);
-            cb(product);
-        })
+
     }
 
     static deleteProduct(id) {
-        getProductsFromFile((products) => {
-            const product = products.find((item) => item.id === id);
-            const updatedProducts = products.filter(item => item.id !== id);
-            fs.writeFile(filePath, JSON.stringify(updatedProducts), (err) => {
-                if(!err) {
-                    Cart.deleteProduct(id, product.price)
-                }
-            })
-        })
+
     }
 }
 
