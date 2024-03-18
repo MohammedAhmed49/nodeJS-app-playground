@@ -1,5 +1,15 @@
 const express = require("express");
-const { getProducts, getIndex, getCart, getCheckout, getOrders, getProduct, postCart, deleteCartItem } = require("../controllers/shop");
+const {
+  getProducts,
+  getIndex,
+  getCart,
+  getCheckout,
+  getOrders,
+  getProduct,
+  postCart,
+  deleteCartItem,
+  postCreateOrder,
+} = require("../controllers/shop");
 
 const Router = express.Router();
 
@@ -11,5 +21,6 @@ Router.post("/cart", postCart);
 Router.get("/checkout", getCheckout);
 Router.get("/orders", getOrders);
 Router.post("/cart-delete-item", deleteCartItem);
+Router.post("/create-order", postCreateOrder);
 
 module.exports = Router;

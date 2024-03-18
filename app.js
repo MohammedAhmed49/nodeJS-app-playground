@@ -11,6 +11,10 @@ const sequelize = require("./utils/database");
 const Product = require("./models/product");
 
 const User = require("./models/user");
+const Cart = require("./models/cart");
+const CartItem = require("./models/cartItem");
+const Order = require("./models/order");
+const OrderItem = require("./models/orderItem");
 
 const app = express();
 
@@ -25,6 +29,7 @@ app.use((req, res, next) => {
   User.findByPk(1)
     .then((user) => {
       req.user = user;
+      next();
     })
     .catch((err) => console.log(err));
 });
@@ -36,9 +41,16 @@ app.use(getErrorPage);
 
 Product.belongsTo(User, { constraints: true, onDelete: "CASCADE" });
 User.hasMany(Product);
+User.hasOne(Cart);
+Cart.belongsTo(User);
+Cart.belongsToMany(Product, { through: CartItem });
+Product.belongsToMany(Cart, { through: CartItem });
+User.hasMany(Order);
+Order.belongsTo(User);
+Order.belongsToMany(Product, { through: OrderItem });
 
 sequelize
-  //   .sync({ force: true })
+  // .sync({ force: true })
   .sync()
   .then((res) => {
     return User.findByPk(1);
@@ -49,7 +61,10 @@ sequelize
     }
     return user;
   })
-  .then((res) => {
+  .then((user) => {
+    return user.createCart();
+  })
+  .then((cart) => {
     app.listen(3000);
   })
   .catch((err) => {
