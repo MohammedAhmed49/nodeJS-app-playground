@@ -13,82 +13,78 @@ const postAddProduct = (req, res, next) => {
   const price = req.body.price;
   const imageUrl = req.body.imageUrl;
   const description = req.body.description;
-  req.user
-    .createProduct({
-      title,
-      price,
-      description,
-      imageUrl,
-    })
+  const product = new Product(title, price, imageUrl, description, description);
+  product
+    .save()
     .then((response) => res.redirect("/admin/products"))
     .catch((err) => console.log(err));
 };
 
-const getEditProduct = (req, res, next) => {
-  const editMode = req.query.edit;
-  if (!editMode) {
-    return res.redirect("/");
-  }
-  const productId = req.params.productId;
-  req.user.getProducts ({ where: { id: productId } }).then((products) => {
-    const product = products[0];
-    if (!product) {
-      res.redirect("/");
-    }
-    res.render("admin/edit-product", {
-      pageTitle: "Edit Product",
-      page: "edit-product",
-      editing: editMode,
-      product: product,
-    });
-  });
-};
+// const getEditProduct = (req, res, next) => {
+//   const editMode = req.query.edit;
+//   if (!editMode) {
+//     return res.redirect("/");
+//   }
+//   const productId = req.params.productId;
+//   req.user.getProducts ({ where: { id: productId } }).then((products) => {
+//     const product = products[0];
+//     if (!product) {
+//       res.redirect("/");
+//     }
+//     res.render("admin/edit-product", {
+//       pageTitle: "Edit Product",
+//       page: "edit-product",
+//       editing: editMode,
+//       product: product,
+//     });
+//   });
+// };
 
-const postEditProduct = (req, res, next) => {
-  const id = req.body.productId;
-  const title = req.body.title;
-  const price = req.body.price;
-  const imageUrl = req.body.imageUrl;
-  const description = req.body.description;
-  Product.findByPk(id)
-    .then((product) => {
-      product.title = title;
-      product.price = price;
-      product.imageUrl = imageUrl;
-      product.description = description;
-      return product.save();
-    })
-    .then((data) => {
-      res.redirect("/admin/products");
-    })
-    .catch((err) => console.log(err));
-};
+// const postEditProduct = (req, res, next) => {
+//   const id = req.body.productId;
+//   const title = req.body.title;
+//   const price = req.body.price;
+//   const imageUrl = req.body.imageUrl;
+//   const description = req.body.description;
+//   Product.findByPk(id)
+//     .then((product) => {
+//       product.title = title;
+//       product.price = price;
+//       product.imageUrl = imageUrl;
+//       product.description = description;
+//       return product.save();
+//     })
+//     .then((data) => {
+//       res.redirect("/admin/products");
+//     })
+//     .catch((err) => console.log(err));
+// };
 
-const getProducts = (req, res, next) => {
-  req.user.getProducts().then((products) => {
-    res.render("admin/products", {
-      pageTitle: "Admin Products",
-      prods: products,
-      page: "admin-products",
-    });
-  });
-};
+// const getProducts = (req, res, next) => {
+//   req.user.getProducts().then((products) => {
+//     res.render("admin/products", {
+//       pageTitle: "Admin Products",
+//       prods: products,
+//       page: "admin-products",
+//     });
+//   });
+// };
 
-const postDeleteProduct = (req, res, next) => {
-  const id = req.body.productId;
-  Product.findByPk(id)
-    .then((product) => {
-      return product.destroy();
-    })
-    .then((response) => {
-      res.redirect("/admin/products");
-    })
-    .catch((err) => console.log(err));
-};
+// const postDeleteProduct = (req, res, next) => {
+//   const id = req.body.productId;
+//   Product.findByPk(id)
+//     .then((product) => {
+//       return product.destroy();
+//     })
+//     .then((response) => {
+//       res.redirect("/admin/products");
+//     })
+//     .catch((err) => console.log(err));
+// };
 
 exports.getAddProduct = getAddProduct;
 exports.postAddProduct = postAddProduct;
-exports.getEditProduct = getEditProduct;
-exports.postEditProduct = postEditProduct;
-exports.getProducts = getProducts;
-exports.postDeleteProduct = postDeleteProduct;
+// exports.getEditProduct = getEditProduct;
+// exports.postEditProduct = postEditProduct;
+// exports.getProducts = getProducts;
+// exports.postDeleteProduct = postDeleteProduct;
