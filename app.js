@@ -3,7 +3,7 @@ const path = require("path");
 
 const bodyParser = require("body-parser");
 const adminRouter = require("./routes/admin");
-// const shopRouter = require("./routes/shop");
+const shopRouter = require("./routes/shop");
 const { getErrorPage } = require("./controllers/error");
 const { mongoConnect } = require("./utils/database");
 
@@ -27,7 +27,7 @@ app.use((req, res, next) => {
 });
 
 app.use("/admin", adminRouter);
-// app.use(shopRouter);
+app.use(shopRouter);
 
 app.use(getErrorPage);
 
