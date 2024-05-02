@@ -13,11 +13,14 @@ const postAddProduct = (req, res, next) => {
   const price = req.body.price;
   const imageUrl = req.body.imageUrl;
   const description = req.body.description;
-  const userId = req.user._id;
-  const product = new Product(title, price, imageUrl, description, userId);
+  const user = req.user;
+  const product = new Product({ title, price, imageUrl, description, userId: user });
   product
     .save()
-    .then((response) => res.redirect("/admin/products"))
+    .then((response) => {
+      console.log("Created product");
+      res.redirect("/admin/products");
+    })
     .catch((err) => console.log(err));
 };
 
@@ -27,7 +30,7 @@ const getEditProduct = (req, res, next) => {
     return res.redirect("/");
   }
   const productId = req.params.productId;
-  Product.fetchById(productId).then((product) => {
+  Product.findById(productId).then((product) => {
     if (!product) {
       res.redirect("/");
     }
@@ -48,10 +51,14 @@ const postEditProduct = (req, res, next) => {
   const description = req.body.description;
   const userId = req.body.userId;
 
-  const product = new Product(title, price, imageUrl, description, userId);
-
-  product
-    .editProduct(id)
+  Product.findById(id)
+    .then((product) => {
+      product.title = title;
+      product.price = price;
+      product.description = description;
+      product.imageUrl = imageUrl;
+      return product.save();
+    })
     .then(() => {
       res.redirect("/admin/products");
     })
@@ -59,7 +66,7 @@ const postEditProduct = (req, res, next) => {
 };
 
 const getProducts = (req, res, next) => {
-  Product.fetchAll().then((products) => {
+  Product.find().then((products) => {
     res.render("admin/products", {
       pageTitle: "Admin Products",
       prods: products,
@@ -70,7 +77,7 @@ const getProducts = (req, res, next) => {
 
 const postDeleteProduct = (req, res, next) => {
   const id = req.body.productId;
-  Product.deleteProduct(id)
+  Product.findByIdAndDelete(id)
     .then((response) => {
       res.redirect("/admin/products");
     })

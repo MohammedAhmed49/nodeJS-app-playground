@@ -1,5 +1,12 @@
 const express = require("express");
-const { getAddProduct, postAddProduct, getProducts, getEditProduct, postEditProduct, postDeleteProduct } = require("../controllers/admin");
+const {
+  getAddProduct,
+  postAddProduct,
+  getProducts,
+  getEditProduct,
+  postEditProduct,
+  postDeleteProduct,
+} = require("../controllers/admin");
 
 const Router = express.Router();
 
