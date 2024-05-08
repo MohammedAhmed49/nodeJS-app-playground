@@ -4,6 +4,7 @@ const getAddProduct = (req, res, next) => {
   res.render("admin/edit-product", {
     pageTitle: "Add Product",
     page: "add-product",
+    isAuthenticated: req.session.isLoggedIn,
     editing: false,
   });
 };
@@ -39,6 +40,7 @@ const getEditProduct = (req, res, next) => {
       page: "edit-product",
       editing: editMode,
       product: product,
+      isAuthenticated: req.session.isLoggedIn,
     });
   });
 };
@@ -71,6 +73,7 @@ const getProducts = (req, res, next) => {
       pageTitle: "Admin Products",
       prods: products,
       page: "admin-products",
+      isAuthenticated: req.session.isLoggedIn,
     });
   });
 };

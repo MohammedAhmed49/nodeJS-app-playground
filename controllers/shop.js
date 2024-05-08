@@ -8,6 +8,7 @@ const getIndex = (req, res, next) => {
         pageTitle: "My Shop",
         prods: products,
         page: "shop",
+        isAuthenticated: req.session.isLoggedIn,
       });
     })
     .catch((err) => {
@@ -22,6 +23,7 @@ const getProducts = (req, res, next) => {
         pageTitle: "All Products",
         prods: products,
         page: "products",
+        isAuthenticated: req.session.isLoggedIn,
       });
     })
     .catch((err) => {
@@ -37,13 +39,13 @@ const getProduct = (req, res, next) => {
         pageTitle: product.title,
         page: "products",
         product: product,
+        isAuthenticated: req.session.isLoggedIn,
       });
     })
     .catch((err) => err);
 };
 
 const getCart = (req, res, next) => {
-  console.log(req.user);
   req.user
     .populate("cart.items.productId")
     // .execPopulate()
@@ -54,9 +56,9 @@ const getCart = (req, res, next) => {
         pageTitle: "My Cart",
         products: products,
         page: "cart",
+        isAuthenticated: req.session.isLoggedIn,
       });
     })
-
     .catch((err) => console.log(err));
 };
 
@@ -103,12 +105,17 @@ const getOrders = (req, res, next) => {
       pageTitle: "My Cart",
       page: "cart",
       orders: orders,
+      isAuthenticated: req.session.isLoggedIn,
     });
   });
 };
 
 const getCheckout = (req, res, next) => {
-  res.render("shop/checkout", { pageTitle: "My Checkout", page: "checkout" });
+  res.render("shop/checkout", {
+    pageTitle: "My Checkout",
+    page: "checkout",
+    isAuthenticated: req.session.isLoggedIn,
+  });
 };
 
 const deleteCartItem = (req, res, next) => {
