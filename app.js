@@ -1,5 +1,6 @@
 const express = require("express");
 const path = require("path");
+const csrf = require("csurf");
 
 const bodyParser = require("body-parser");
 const adminRouter = require("./routes/admin");
@@ -24,6 +25,8 @@ const store = new MongodbStore({
   collection: "sessions",
 });
 
+const csrfProtection = csrf();
+
 app.use(express.static(path.join(__dirname, "public")));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(
@@ -34,6 +37,14 @@ app.use(
     store: store,
   })
 );
+app.use(csrfProtection);
+
+app.use((req, res, next) => {
+  res.locals.isAuthenticated = req.session.isLoggedIn;
+  res.locals.csrfToken = req.csrfToken();
+
+  next();
+});
 
 app.use((req, res, next) => {
   if (!req.session.user) {

@@ -7,19 +7,20 @@ const {
   postEditProduct,
   postDeleteProduct,
 } = require("../controllers/admin");
+const isAuth = require("../middleware/isAuth");
 
 const Router = express.Router();
 
-Router.get("/add-product", getAddProduct);
+Router.get("/add-product", isAuth, getAddProduct);
 
-Router.get("/edit-product/:productId", getEditProduct);
+Router.get("/edit-product/:productId", isAuth, getEditProduct);
 
-Router.post("/edit-product/", postEditProduct);
+Router.post("/edit-product/", isAuth, postEditProduct);
 
-Router.post("/add-product", postAddProduct);
+Router.post("/add-product", isAuth, postAddProduct);
 
-Router.post("/delete-product", postDeleteProduct);
+Router.post("/delete-product", isAuth, postDeleteProduct);
 
-Router.get("/products", getProducts);
+Router.get("/products", isAuth, getProducts);
 
 module.exports = Router;
