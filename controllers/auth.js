@@ -6,13 +6,14 @@ const sendGridTrans = require("nodemailer-sendgrid-transport");
 const transporter = nodemailer.createTransport(
   sendGridTrans({
     auth: {
-      api_key:
-        "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",
+      api_key: process.env.SEND_GRID_API_KEY,
     },
   })
 );
 
 const getSignup = (req, res, next) => {
+  console.log(process.env.SEND_GRID_API_KEY);
+
   let message = req.flash("error");
   if (message.length > 0) {
     message = message[0];

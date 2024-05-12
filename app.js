@@ -3,6 +3,8 @@ const path = require("path");
 const csrf = require("csurf");
 const flash = require("connect-flash");
 
+require("dotenv").config();
+
 const bodyParser = require("body-parser");
 const adminRouter = require("./routes/admin");
 const shopRouter = require("./routes/shop");
@@ -13,8 +15,7 @@ const mongoose = require("mongoose");
 const session = require("express-session");
 const MongodbStore = require("connect-mongodb-session")(session);
 
-const MONGODB_URI =
-  "mongodb+srv://mohammed:123@cluster0.qkxwsji.mongodb.net/shop?retryWrites=true&w=majority&appName=Cluster0";
+const MONGODB_URI = process.env.MONGODB_URI;
 
 const app = express();
 
