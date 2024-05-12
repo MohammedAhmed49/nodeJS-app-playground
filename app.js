@@ -1,6 +1,7 @@
 const express = require("express");
 const path = require("path");
 const csrf = require("csurf");
+const flash = require("connect-flash");
 
 const bodyParser = require("body-parser");
 const adminRouter = require("./routes/admin");
@@ -38,6 +39,7 @@ app.use(
   })
 );
 app.use(csrfProtection);
+app.use(flash());
 
 app.use((req, res, next) => {
   res.locals.isAuthenticated = req.session.isLoggedIn;
