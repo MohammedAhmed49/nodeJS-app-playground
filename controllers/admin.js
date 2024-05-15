@@ -15,7 +15,13 @@ const postAddProduct = (req, res, next) => {
   const imageUrl = req.body.imageUrl;
   const description = req.body.description;
   const user = req.user;
-  const product = new Product({ title, price, imageUrl, description, userId: user });
+  const product = new Product({
+    title,
+    price,
+    imageUrl,
+    description,
+    userId: user,
+  });
   product
     .save()
     .then((response) => {
@@ -51,24 +57,25 @@ const postEditProduct = (req, res, next) => {
   const price = req.body.price;
   const imageUrl = req.body.imageUrl;
   const description = req.body.description;
-  const userId = req.body.userId;
 
   Product.findById(id)
     .then((product) => {
+      if (product.userId.toString() !== req.user._id.toString()) {
+        return res.redirect("/");
+      }
       product.title = title;
       product.price = price;
       product.description = description;
       product.imageUrl = imageUrl;
-      return product.save();
-    })
-    .then(() => {
-      res.redirect("/admin/products");
+      return product.save().then(() => {
+        res.redirect("/admin/products");
+      });
     })
     .catch((err) => console.log(err));
 };
 
 const getProducts = (req, res, next) => {
-  Product.find().then((products) => {
+  Product.find({ userId: req.user._id }).then((products) => {
     res.render("admin/products", {
       pageTitle: "Admin Products",
       prods: products,
@@ -80,7 +87,7 @@ const getProducts = (req, res, next) => {
 
 const postDeleteProduct = (req, res, next) => {
   const id = req.body.productId;
-  Product.findByIdAndDelete(id)
+  Product.deleteOne({ id: id, userId: req.user.id })
     .then((response) => {
       res.redirect("/admin/products");
     })
