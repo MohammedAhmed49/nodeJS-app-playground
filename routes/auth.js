@@ -10,6 +10,7 @@ const {
   getNewPassword,
   postNewPassword,
 } = require("../controllers/auth");
+const { check } = require("express-validator");
 
 const Router = express.Router();
 
@@ -18,7 +19,11 @@ Router.get("/signup", getSignup);
 Router.get("/reset-password", getResetPassword);
 Router.get("/reset-password/:token", getNewPassword);
 Router.post("/login", postLogin);
-Router.post("/signup", postSignup);
+Router.post(
+  "/signup",
+  check("email").isEmail().withMessage("Please enter a valid email!"),
+  postSignup
+);
 Router.post("/logout", postLogout);
 Router.post("/reset-password", postResetPassword);
 Router.post("/new-password", postNewPassword);
