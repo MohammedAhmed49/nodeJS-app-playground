@@ -10,7 +10,8 @@ const {
   getNewPassword,
   postNewPassword,
 } = require("../controllers/auth");
-const { check } = require("express-validator");
+const { check, body } = require("express-validator");
+const User = require("../models/user");
 
 const Router = express.Router();
 
@@ -18,10 +19,45 @@ Router.get("/login", getLogin);
 Router.get("/signup", getSignup);
 Router.get("/reset-password", getResetPassword);
 Router.get("/reset-password/:token", getNewPassword);
-Router.post("/login", postLogin);
+Router.post(
+  "/login",
+  [
+    body("email").isEmail().withMessage("Please enter a valid email!"),
+    body(
+      "password",
+      "Password should be a combination of numbers and alphabets and 5 characters minimum!"
+    )
+      .isLength({ min: 5 })
+      .isAlphanumeric(),
+  ],
+  postLogin
+);
 Router.post(
   "/signup",
-  check("email").isEmail().withMessage("Please enter a valid email!"),
+  [
+    check("email")
+      .isEmail()
+      .withMessage("Please enter a valid email!")
+      .custom((value, { req }) => {
+        return User.findOne({ email: value }).then((user) => {
+          if (user) {
+            return Promise.reject("E-mail already exists!");
+          }
+        });
+      }),
+    body(
+      "password",
+      "Password should be a combination of numbers and alphabets and 5 characters minimum!"
+    )
+      .isLength({ min: 5 })
+      .isAlphanumeric(),
+    body("confirmPassword").custom((value, { req }) => {
+      if (value !== req.body.password) {
+        throw new Error("Passwords should match!");
+      }
+      return true;
+    }),
+  ],
   postSignup
 );
 Router.post("/logout", postLogout);

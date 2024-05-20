@@ -46,7 +46,6 @@ const getLogin = (req, res, next) => {
 const postSignup = (req, res, next) => {
   const email = req.body.email;
   const password = req.body.password;
-  const confirmPassword = req.body.confirmPassword;
   const errors = validationResult(req);
 
   if (!errors.isEmpty()) {
@@ -58,34 +57,24 @@ const postSignup = (req, res, next) => {
     });
   }
 
-  User.findOne({ email: email })
-    .then((user) => {
-      if (user) {
-        req.flash("error", "Email already exists");
-        res.redirect("/signup");
-      } else {
-        return bcrypt
-          .hash(password, 12)
-          .then((hashedPassword) => {
-            const user = new User({
-              email: email,
-              password: hashedPassword,
-              cart: { items: [] },
-            });
-
-            return user.save();
-          })
-          .then(() => {
-            res.redirect("/login");
-            return transporter.sendMail({
-              to: email,
-              sender: "mo.ahmed499@gmail.com",
-              subject: "Successful signup test",
-              html: "<h1>Signed up successfully.</h1>",
-            });
-          })
-          .catch((err) => console.log(err));
-      }
+  return bcrypt
+    .hash(password, 12)
+    .then((hashedPassword) => {
+      const user = new User({
+        email: email,
+        password: hashedPassword,
+        cart: { items: [] },
+      });
+      return user.save();
+    })
+    .then(() => {
+      res.redirect("/login");
+      return transporter.sendMail({
+        to: email,
+        sender: "mo.ahmed499@gmail.com",
+        subject: "Successful signup test",
+        html: "<h1>Signed up successfully.</h1>",
+      });
     })
     .catch((err) => console.log(err));
 };
@@ -93,6 +82,14 @@ const postSignup = (req, res, next) => {
 const postLogin = (req, res, next) => {
   const email = req.body.email;
   const password = req.body.password;
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(422).render("auth/login", {
+      page: "login",
+      pageTitle: "Login",
+      errorMessage: errors.array()[0].msg,
+    });
+  }
   User.findOne({ email: email })
     .then((user) => {
       if (!user) {
