@@ -8,6 +8,7 @@ const {
   postDeleteProduct,
 } = require("../controllers/admin");
 const isAuth = require("../middleware/isAuth");
+const { body } = require("express-validator");
 
 const Router = express.Router();
 
@@ -15,9 +16,41 @@ Router.get("/add-product", isAuth, getAddProduct);
 
 Router.get("/edit-product/:productId", isAuth, getEditProduct);
 
-Router.post("/edit-product/", isAuth, postEditProduct);
+Router.post(
+  "/edit-product/",
+  isAuth,
+  [
+    body("title")
+      .isString()
+      .isLength({ min: 3 })
+      .withMessage("Title should be more than 3 characters!"),
+    body("price").isNumeric(),
+    body("imageUrl").isURL().withMessage("Please enter a valid URL"),
+    body("description")
+      .isString()
+      .isLength({ min: 5 })
+      .withMessage("Description should be more than 3 characters!"),
+  ],
+  postEditProduct
+);
 
-Router.post("/add-product", isAuth, postAddProduct);
+Router.post(
+  "/add-product",
+  isAuth,
+  [
+    body("title")
+      .isString()
+      .isLength({ min: 3 })
+      .withMessage("Title should be more than 3 characters!"),
+    body("price").isNumeric(),
+    body("imageUrl").isURL().withMessage("Please enter a valid URL"),
+    body("description")
+      .isString()
+      .isLength({ min: 5 })
+      .withMessage("Description should be more than 3 characters!"),
+  ],
+  postAddProduct
+);
 
 Router.post("/delete-product", isAuth, postDeleteProduct);
 

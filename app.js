@@ -10,7 +10,7 @@ const adminRouter = require("./routes/admin");
 const shopRouter = require("./routes/shop");
 const authRouter = require("./routes/auth");
 const User = require("./models/user");
-const { getErrorPage } = require("./controllers/error");
+const { get404Page, get500Page } = require("./controllers/error");
 const mongoose = require("mongoose");
 const session = require("express-session");
 const MongodbStore = require("connect-mongodb-session")(session);
@@ -49,17 +49,20 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use((req, res, next) => {
+app.use((req, res, next) => { 
   if (!req.session.user) {
     return next();
   }
   User.findById(req.session.user._id)
     .then((user) => {
+      if (!user) {
+        return next();
+      }
       req.user = user;
       next();
     })
     .catch((err) => {
-      console.log(err);
+      throw new Error(err);
     });
 });
 
@@ -67,7 +70,15 @@ app.use("/admin", adminRouter);
 app.use(shopRouter);
 app.use(authRouter);
 
-app.use(getErrorPage);
+app.use(get404Page);
+
+app.use((error, req, res, next) => {
+  res.status(500).render("500", {
+    page: "500",
+    pageTitle: "Something went wrong!",
+    isAuthenticated: req.session.isLoggedIn,
+  });
+});
 
 mongoose.connect(MONGODB_URI).then((result) => {
   app.listen(3000);

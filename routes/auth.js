@@ -22,13 +22,17 @@ Router.get("/reset-password/:token", getNewPassword);
 Router.post(
   "/login",
   [
-    body("email").isEmail().withMessage("Please enter a valid email!"),
+    body("email")
+      .isEmail()
+      .withMessage("Please enter a valid email!")
+      .normalizeEmail(),
     body(
       "password",
       "Password should be a combination of numbers and alphabets and 5 characters minimum!"
     )
       .isLength({ min: 5 })
-      .isAlphanumeric(),
+      .isAlphanumeric()
+      .trim(),
   ],
   postLogin
 );
@@ -44,13 +48,15 @@ Router.post(
             return Promise.reject("E-mail already exists!");
           }
         });
-      }),
+      })
+      .normalizeEmail(),
     body(
       "password",
       "Password should be a combination of numbers and alphabets and 5 characters minimum!"
     )
       .isLength({ min: 5 })
-      .isAlphanumeric(),
+      .isAlphanumeric()
+      .trim(),
     body("confirmPassword").custom((value, { req }) => {
       if (value !== req.body.password) {
         throw new Error("Passwords should match!");
