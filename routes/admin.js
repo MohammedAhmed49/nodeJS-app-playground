@@ -25,7 +25,6 @@ Router.post(
       .isLength({ min: 3 })
       .withMessage("Title should be more than 3 characters!"),
     body("price").isNumeric(),
-    body("imageUrl").isURL().withMessage("Please enter a valid URL"),
     body("description")
       .isString()
       .isLength({ min: 5 })
@@ -43,7 +42,6 @@ Router.post(
       .isLength({ min: 3 })
       .withMessage("Title should be more than 3 characters!"),
     body("price").isNumeric(),
-    body("imageUrl").isURL().withMessage("Please enter a valid URL"),
     body("description")
       .isString()
       .isLength({ min: 5 })

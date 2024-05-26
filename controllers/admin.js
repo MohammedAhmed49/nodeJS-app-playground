@@ -13,9 +13,18 @@ const getAddProduct = (req, res, next) => {
 const postAddProduct = (req, res, next) => {
   const title = req.body.title;
   const price = req.body.price;
-  const imageUrl = req.body.imageUrl;
+  const image = req.file;
   const description = req.body.description;
   const user = req.user;
+
+  if (!image) {
+    return res.status(422).render("admin/edit-product", {
+      pageTitle: "Add Product",
+      page: "add-product",
+      editing: false,
+      errorMessage: "File uploaded is not a valid image",
+    });
+  }
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(422).render("admin/edit-product", {
@@ -25,6 +34,7 @@ const postAddProduct = (req, res, next) => {
       errorMessage: errors.array()[0].msg,
     });
   }
+  const imageUrl = image.path;
   const product = new Product({
     title,
     price,
@@ -75,31 +85,23 @@ const postEditProduct = (req, res, next) => {
   const id = req.body.productId;
   const title = req.body.title;
   const price = req.body.price;
-  const imageUrl = req.body.imageUrl;
+  const image = req.file;
   const description = req.body.description;
 
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    const editMode = req.query.edit;
-    Product.findById(id)
-      .then((product) => {
-        console.log(product);
-        if (!product) {
-          res.redirect("/");
-        }
-        return res.status(422).render("admin/edit-product", {
-          pageTitle: "edit Product",
-          page: "edit-product",
-          editing: true,
-          product: product,
-          errorMessage: errors.array()[0].msg,
-        });
-      })
-      .catch((err) => {
-        const error = new Error(err);
-        error.httpStatusCode = 500;
-        return next(error);
-      });
+    return res.status(422).render("admin/edit-product", {
+      pageTitle: "edit Product",
+      page: "edit-product",
+      editing: true,
+      product: {
+        _id: id,
+        title,
+        price,
+        description,
+      },
+      errorMessage: errors.array()[0].msg,
+    });
   }
 
   Product.findById(id)
@@ -107,10 +109,12 @@ const postEditProduct = (req, res, next) => {
       if (product.userId.toString() !== req.user._id.toString()) {
         return res.redirect("/");
       }
+      if (image) {
+        product.imageUrl = image.path;
+      }
       product.title = title;
       product.price = price;
       product.description = description;
-      product.imageUrl = imageUrl;
       return product.save().then(() => {
         res.redirect("/admin/products");
       });
