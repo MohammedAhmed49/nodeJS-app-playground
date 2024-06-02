@@ -160,17 +160,29 @@ const deleteCartItem = (req, res, next) => {
 const getInvoiceFile = (req, res, next) => {
   const orderId = req.params.orderId;
 
-  const fileName = "invoice-" + orderId + ".pdf";
-  const filePath = path.join("data", "invoices", fileName);
+  Order.findById(orderId)
+    .then((order) => {
+      if (!order) {
+        return next(new Error("No order found."));
+      }
+      if (order.user.userId.toString() !== req.user._id.toString()) {
+        return next(new Error("Unauthorized."));
+      }
+      const fileName = "invoice-" + orderId + ".pdf";
+      const filePath = path.join("data", "invoices", fileName);
 
-  fs.readFile(filePath, (error, data) => {
-    if (error) {
-      return next(error);
-    }
-    res.setHeader("Content-Type", "application/pdf");
-    res.setHeader("Content-Disposition", `inline; filename="${fileName}"`);
-    res.send(data);
-  });
+      fs.readFile(filePath, (error, data) => {
+        if (error) {
+          return next(error);
+        }
+        res.setHeader("Content-Type", "application/pdf");
+        res.setHeader("Content-Disposition", `inline; filename="${fileName}"`);
+        res.send(data);
+      });
+    })
+    .catch((err) => {
+      return next(err);
+    });
 };
 
 exports.getIndex = getIndex;
