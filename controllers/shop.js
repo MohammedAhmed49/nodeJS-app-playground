@@ -171,14 +171,23 @@ const getInvoiceFile = (req, res, next) => {
       const fileName = "invoice-" + orderId + ".pdf";
       const filePath = path.join("data", "invoices", fileName);
 
-      fs.readFile(filePath, (error, data) => {
-        if (error) {
-          return next(error);
-        }
-        res.setHeader("Content-Type", "application/pdf");
-        res.setHeader("Content-Disposition", `inline; filename="${fileName}"`);
-        res.send(data);
-      });
+      // Sending the file after all the buffers are done
+
+      // fs.readFile(filePath, (error, data) => {
+      //   if (error) {
+      //     return next(error);
+      //   }
+      //   res.setHeader("Content-Type", "application/pdf");
+      //   res.setHeader("Content-Disposition", `inline; filename="${fileName}"`);
+      //   res.send(data);
+      // });
+
+      // Streaming the file chunk by chunk
+
+      const file = fs.createReadStream(filePath);
+      res.setHeader("Content-Type", "application/pdf");
+      res.setHeader("Content-Disposition", `inline; filename="${fileName}"`);
+      file.pipe(res);
     })
     .catch((err) => {
       return next(err);
