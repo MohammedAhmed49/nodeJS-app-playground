@@ -1,5 +1,6 @@
 const fs = require("fs");
 const path = require("path");
+const PDFDocument = require("pdfkit");
 
 const Order = require("../models/order");
 const Product = require("../models/product");
@@ -171,6 +172,34 @@ const getInvoiceFile = (req, res, next) => {
       const fileName = "invoice-" + orderId + ".pdf";
       const filePath = path.join("data", "invoices", fileName);
 
+      res.setHeader("Content-Type", "application/pdf");
+      res.setHeader("Content-Disposition", `inline; filename="${fileName}"`);
+
+      const pdfDoc = new PDFDocument();
+      pdfDoc.pipe(fs.createWriteStream(filePath));
+      pdfDoc.pipe(res);
+
+      pdfDoc.fontSize(18).text("Invoice");
+      pdfDoc.fontSize(16).text("--------------");
+
+      let totalPrice = 0;
+      order.products.forEach((product) => {
+        totalPrice += product.quantity * product.productData.price;
+        pdfDoc
+          .fontSize(14)
+          .text(
+            product.productData.title +
+              " - " +
+              product.quantity +
+              " x " +
+              "$" +
+              product.productData.price
+          );
+      });
+      pdfDoc.fontSize(16).text("--------------");
+      pdfDoc.fontSize(16).text("Total price: $" + totalPrice);
+      pdfDoc.end();
+
       // Sending the file after all the buffers are done
 
       // fs.readFile(filePath, (error, data) => {
@@ -184,10 +213,9 @@ const getInvoiceFile = (req, res, next) => {
 
       // Streaming the file chunk by chunk
 
-      const file = fs.createReadStream(filePath);
-      res.setHeader("Content-Type", "application/pdf");
-      res.setHeader("Content-Disposition", `inline; filename="${fileName}"`);
-      file.pipe(res);
+      // const file = fs.createReadStream(filePath);
+
+      // file.pipe(res);
     })
     .catch((err) => {
       return next(err);
