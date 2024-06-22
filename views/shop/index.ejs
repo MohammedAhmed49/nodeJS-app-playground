@@ -29,6 +29,7 @@
                     </article>
                 <% } %>
             </div>
+            <%- include("../includes/pagination", {currentPage: currentPage, nextPage: nextPage, hasNextPage: hasNextPage, prevPage: prevPage, hasPrevPage: hasPrevPage, lastPage: lastPage}) %>
         <% } else { %>
             <h1>No Products Found!</h1>
         <% } %>
