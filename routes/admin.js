@@ -5,7 +5,7 @@ const {
   getProducts,
   getEditProduct,
   postEditProduct,
-  postDeleteProduct,
+  deleteProduct,
 } = require("../controllers/admin");
 const isAuth = require("../middleware/isAuth");
 const { body } = require("express-validator");
@@ -50,7 +50,7 @@ Router.post(
   postAddProduct
 );
 
-Router.post("/delete-product", isAuth, postDeleteProduct);
+Router.delete("/product/:productId", isAuth, deleteProduct);
 
 Router.get("/products", isAuth, getProducts);
 
